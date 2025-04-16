@@ -9,6 +9,18 @@ defmodule Database do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
+  defp order_matching_criteria?({_, order}, criteria) do
+    Enum.any?(criteria, fn {key, value} -> order[key] === value end)
+  end
+
+  def search(database, criteria) do
+    database
+      |> :ets.tab2list
+      |> Enum.filter(
+        fn order -> order_matching_criteria?(order, criteria) end
+      )
+  end
+
   def read(key) do
     GenServer.call(__MODULE__, {:read, key})
   end
