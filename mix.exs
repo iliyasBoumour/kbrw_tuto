@@ -14,8 +14,8 @@ defmodule Formation.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {TutoKbrwStack, []},
       extra_applications: [:logger],
-      mod: {Formation.Application, []}
     ]
   end
 
