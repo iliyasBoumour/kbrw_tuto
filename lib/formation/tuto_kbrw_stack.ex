@@ -1,4 +1,4 @@
-defmodule TutoKbrwStack do
+defmodule Formation.TutoKbrwStack do
   use Application
 
   @impl true
@@ -7,7 +7,7 @@ defmodule TutoKbrwStack do
       ServSupervisor
     ]
 
-    opts = [strategy: :one_for_one, name: TutoKbrwStack.Supervisor]
+    opts = [strategy: :one_for_one, name: Formation.TutoKbrwStack.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
