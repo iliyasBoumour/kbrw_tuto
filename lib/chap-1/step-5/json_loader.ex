@@ -1,6 +1,7 @@
 defmodule JsonLoader do
   def load_to_database(database, json_file) do
-    File.read!(json_file) |> Poison.decode!
+    File.read!(json_file)
+      |> Poison.decode!
       |> Enum.each(fn order -> :ets.insert(database,{order["id"], order}) end)
   end
 end

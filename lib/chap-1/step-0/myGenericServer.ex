@@ -31,8 +31,8 @@ defmodule MyGenericServer do
     end
   end
 
-  def start_link(callack_module, server_initial_state) do
-    pid = spawn_link(fn -> MyGenericServer.loop({callack_module, server_initial_state}) end)
+  def start_link(callback_module, server_initial_state) do
+    pid = spawn_link(fn -> MyGenericServer.loop({callback_module, server_initial_state}) end)
     {:ok, pid}
   end
 end
