@@ -1,7 +1,14 @@
-const showAlert = () => {
-  element = <div>Hey i was created from react! {10 + 10}</div>;
+var createReactClass = require("create-react-class");
 
-  ReactDOM.render(element, document.getElementById("root"));
-};
+var Page = createReactClass({
+  render() {
+    return (
+      <JSXZ in="template" sel=".container">
+        <Z sel=".item">Burgers</Z>
+        <Z sel=".price">50</Z>
+      </JSXZ>
+    );
+  },
+});
 
-document.getElementById("alertBtn").onclick = showAlert;
+ReactDOM.render(<Page />, document.getElementById("root"));
