@@ -51,16 +51,18 @@ defmodule Database do
     {:ok, table}
   end
 
+  # Read
   @impl true
   def handle_call({:read, key}, _from, state) do
     entry = case table_name() |> :ets.lookup(key) do
-      [x] -> x
+      [{_, order}] -> order
       [] -> nil
     end
 
     {:reply, entry, state}
   end
 
+  # Create
   @impl true
   def handle_cast({:create, payload}, state) do
     table_name() |> :ets.insert(payload)
@@ -68,6 +70,7 @@ defmodule Database do
     {:noreply, state}
   end
 
+  # Delete
   @impl true
   def handle_cast({:delete, key}, state) do
     table_name() |> :ets.delete(key)
