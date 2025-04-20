@@ -23,7 +23,9 @@ erl_crash.dump
 formation-*.tar
 
 /web/node_modules
+/web/dist
 
 # Temporary files for e.g. tests
+.vscode
 /tmp
 /lib/tests/code
