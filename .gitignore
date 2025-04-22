@@ -24,6 +24,7 @@ formation-*.tar
 
 /web/node_modules
 /web/dist
+/priv
 
 # Temporary files for e.g. tests
 .vscode
