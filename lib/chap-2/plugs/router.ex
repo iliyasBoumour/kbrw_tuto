@@ -2,6 +2,7 @@ defmodule Plugs.Router do
   use Plug.Router
 
   plug :match
+  plug Plug.Static, from: "priv/static", at: "/static"
   plug Plug.Parsers,
     parsers: [:json],
     pass: ["application/json"],
@@ -18,6 +19,8 @@ defmodule Plugs.Router do
   delete "/orders/:id", do: delete_order(conn, id)
 
   get "/search", do: search_order(conn)
+
+  get _, do: send_file(conn, 200, "priv/static/index.html")
 
   match _, do: send_resp(conn, 404, "Page not found")
 
