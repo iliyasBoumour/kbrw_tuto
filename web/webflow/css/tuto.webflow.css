@@ -2208,7 +2208,11 @@ textarea.w-select {
 }
 
 .container {
-  display: block;
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  flex-flow: column;
+  padding: 0;
+  display: flex;
 }
 
 .paragraph {
@@ -2245,11 +2249,11 @@ textarea.w-select {
   display: flex;
 }
 
-.paragraph-2 {
+.logged-in-user {
   margin-bottom: 0;
 }
 
-.div-block-2 {
+.login-block {
   grid-column-gap: 16px;
   grid-row-gap: 16px;
   flex-flow: column;
@@ -2478,7 +2482,7 @@ textarea.w-select {
   display: flex;
 }
 
-.div-block-8 {
+.client-info {
   border: 1px solid #000;
   flex-flow: column;
   padding-top: 10px;
@@ -2486,34 +2490,93 @@ textarea.w-select {
   display: flex;
 }
 
-.div-block-9 {
+.client-info-row {
   grid-column-gap: 16px;
   grid-row-gap: 16px;
   justify-content: center;
   display: flex;
 }
 
-.div-block-10 {
+.client-info-title {
   flex: 1;
   justify-content: flex-end;
   display: flex;
 }
 
-.div-block-11 {
+.client-info-data {
   flex: 1;
   display: flex;
 }
 
-.div-block-12 {
+.order-detail-table-container {
   grid-column-gap: 16px;
   grid-row-gap: 16px;
   flex-flow: column;
   display: flex;
 }
 
-.div-block-13 {
+.footer-container {
   justify-content: center;
   display: flex;
+}
+
+.layout {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+  flex-flow: column;
+  padding: 20px;
+  display: block;
+}
+
+.layout-container {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+  flex-flow: column;
+  flex: 1;
+  height: auto;
+  display: flex;
+}
+
+.header {
+  grid-column-gap: 32px;
+  grid-row-gap: 32px;
+  flex-flow: column;
+  display: flex;
+}
+
+.header-content {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.pagination {
+  justify-content: center;
+  display: flex;
+}
+
+.text-button {
+  color: #333;
+  background-color: #0000;
+  padding: 4px 8px;
+}
+
+.text-button.pagination-selected {
+  color: #fff;
+  background-color: #3898ec;
+  border-radius: 100%;
+}
+
+.header-title {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.header-container {
+  grid-column-gap: 32px;
+  grid-row-gap: 32px;
+  flex-flow: column;
+  display: block;
 }
 
 @media screen and (max-width: 479px) {

@@ -1,29 +1,24 @@
 require("!!file-loader?name=[name].[ext]!./index.html");
-var ReactDOM = require("react-dom");
-var React = require("react");
-var createReactClass = require("create-react-class");
 require("./webflow/css/tuto.webflow.css");
+const ReactDOM = require("react-dom");
+const React = require("react");
+const { getBrowserState } = require("./router/browserState");
+const { Child } = require("./components/Child");
+const { ErrorPage } = require("./components/ErrorPage");
 
-var { orders } = require("./data");
+function onPathChange() {
+  const { browserState } = getBrowserState();
+  const { route } = browserState;
 
-var Page = createReactClass({
-  render() {
-    return (
-      <JSXZ in="orders" sel=".body">
-        <ChildrenZ />
-        <Z in="orders" sel=".tab-body">
-          {orders.map((order) => (
-            <JSXZ key={order.remoteid} in="orders" sel=".tab-line">
-              <Z sel=" .col-1 .p">{order.remoteid}</Z>
-              <Z sel=" .col-2 .p">{order.custom.customer.full_name}</Z>
-              <Z sel=" .col-3 .p">{order.custom.billing_address}</Z>
-              <Z sel=" .col-4 .p">{order.items}</Z>
-            </JSXZ>
-          ))}
-        </Z>
-      </JSXZ>
-    );
-  },
-});
+  const component = route ? (
+    <Child {...browserState} />
+  ) : (
+    <ErrorPage message={"Not Found"} code={404} />
+  );
 
-ReactDOM.render(<Page />, document.getElementById("root"));
+  ReactDOM.render(component, document.getElementById("root"));
+}
+
+window.addEventListener("popstate", () => onPathChange());
+
+onPathChange();
