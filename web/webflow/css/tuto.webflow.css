@@ -2579,6 +2579,14 @@ textarea.w-select {
   display: block;
 }
 
+.row {
+  grid-column-gap: 4px;
+  grid-row-gap: 4px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
 @media screen and (max-width: 479px) {
   .body {
     padding-left: 10px;

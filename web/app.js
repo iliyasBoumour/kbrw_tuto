@@ -5,18 +5,28 @@ const React = require("react");
 const { getBrowserState } = require("./router/browserState");
 const { Child } = require("./components/Child");
 const { ErrorPage } = require("./components/ErrorPage");
+const { addRemoteProps } = require("./http/addRemoteProps");
 
-function onPathChange() {
-  const { browserState } = getBrowserState();
-  const { route } = browserState;
+export function onPathChange() {
+  let { browserState } = getBrowserState();
 
-  const component = route ? (
-    <Child {...browserState} />
-  ) : (
-    <ErrorPage message={"Not Found"} code={404} />
+  addRemoteProps(browserState).then(
+    (props) => {
+      browserState = props;
+      console.log(browserState);
+
+      ReactDOM.render(
+        <Child {...browserState} />,
+        document.getElementById("root")
+      );
+    },
+    (res) => {
+      ReactDOM.render(
+        <ErrorPage message={"Shit happened"} code={res.http_code} />,
+        document.getElementById("root")
+      );
+    }
   );
-
-  ReactDOM.render(component, document.getElementById("root"));
 }
 
 window.addEventListener("popstate", () => onPathChange());

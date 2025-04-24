@@ -10,15 +10,17 @@ defmodule Plugs.Router do
   plug :dispatch
 
   # Crud routes
-  post "/orders", do: create_order(conn)
+  post "/api/orders", do: create_order(conn)
 
-  get "/orders/:id", do: get_order(conn, id)
+  get "/api/orders/:id", do: get_order(conn, id)
 
-  put "/orders/:id", do: update_order(conn, id)
+  get "/api/orders", do: get_orders(conn)
 
-  delete "/orders/:id", do: delete_order(conn, id)
+  put "/api/orders/:id", do: update_order(conn, id)
 
-  get "/search", do: search_order(conn)
+  delete "/api/orders/:id", do: delete_order(conn, id)
+
+  get "/api/search", do: search_order(conn)
 
   get _, do: send_file(conn, 200, "priv/static/index.html")
 
@@ -55,6 +57,12 @@ defmodule Plugs.Router do
       nil ->  send_resp(conn, 404, "Order not found")
       order -> send_resp(conn, 200, to_json(order))
     end
+  end
+
+  defp get_orders(conn) do
+    orders = Database.read_all()
+
+    send_resp(conn, 200, to_json(orders))
   end
 
   defp update_order(conn, order_id) do

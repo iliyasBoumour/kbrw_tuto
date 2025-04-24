@@ -26,6 +26,10 @@ defmodule Database do
 
   # CRUD
 
+  def read_all do
+    GenServer.call(__MODULE__, {:read_all})
+  end
+
   def read(key) do
     GenServer.call(__MODULE__, {:read, key})
   end
@@ -60,6 +64,15 @@ defmodule Database do
     end
 
     {:reply, entry, state}
+  end
+
+  @impl true
+  def handle_call({:read_all}, _from, state) do
+    data = table_name()
+      |> :ets.tab2list
+      |> Enum.map(fn {_, order} -> order end)
+
+    {:reply, data, state}
   end
 
   # Create
