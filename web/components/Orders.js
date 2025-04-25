@@ -13,8 +13,11 @@ export const Orders = createReactClass({
     dispatchEvent(new PopStateEvent("popstate"));
   },
   async onDeleteOrder(orderId) {
-    await HTTP.delete(`/api/orders/${orderId}`);
-    this.refrechData();
+    const responseCode = await this.props.loader(async () =>
+      HTTP.delete(`/api/orders/${orderId}`)
+    );
+
+    if (responseCode === 204) this.refrechData();
   },
   showDeleteModal(orderId) {
     return () => {

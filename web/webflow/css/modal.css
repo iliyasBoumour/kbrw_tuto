@@ -2210,6 +2210,10 @@ textarea.w-select {
   width: 90%;
 }
 
+.loader-content.modal-content {
+  overflow: hidden;
+}
+
 .modal-title {
   text-align: center;
   margin-top: 0;

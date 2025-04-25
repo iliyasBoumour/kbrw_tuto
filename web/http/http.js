@@ -15,7 +15,7 @@ export const HTTP = new (function () {
       req.setRequestHeader("content-type", "application/json");
       req.onload = () => {
         if (req.status >= 200 && req.status < 300) {
-          resolve(req.responseText && JSON.parse(req.responseText));
+          resolve(req.responseText ? JSON.parse(req.responseText) : req.status);
         } else {
           reject({ http_code: req.status });
         }

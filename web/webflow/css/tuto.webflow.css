@@ -2432,6 +2432,7 @@ textarea.w-select {
 
 .p {
   text-align: center;
+  white-space: normal;
   margin-top: 0;
   margin-bottom: 0;
   padding-bottom: 0;
@@ -2452,6 +2453,10 @@ textarea.w-select {
 
 .p.pagination.pagination-selected {
   font-size: 18px;
+}
+
+.p.payment-method {
+  word-break: break-all;
 }
 
 .div-block-6 {

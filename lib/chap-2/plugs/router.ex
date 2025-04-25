@@ -42,6 +42,8 @@ defmodule Plugs.Router do
   defp delete_order(conn, order_id) do
     order = Database.read(order_id)
 
+    :timer.sleep(2000)
+
     case order do
       nil ->  send_resp(conn, 404, "Order not found")
       _ ->
