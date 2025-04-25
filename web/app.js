@@ -1,5 +1,6 @@
 require("!!file-loader?name=[name].[ext]!./index.html");
 require("./webflow/css/tuto.webflow.css");
+require("./webflow/css/modal.css");
 const ReactDOM = require("react-dom");
 const React = require("react");
 const { getBrowserState } = require("./router/browserState");
