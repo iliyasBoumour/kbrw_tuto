@@ -1,9 +1,10 @@
 # Quote & unquote
 
 ## Quote
-- In Elixir abstract syntax tree (AST) os the internal representation of our code, is composed of tuples. 
+
+- In Elixir abstract syntax tree (AST) os the internal representation of our code, is composed of tuples.
 - These tuples contain three parts: `function name, metadata, and function arguments`.
-- In order to see these internal structures, Elixir supplies us with the `quote/2` function. 
+- In order to see these internal structures, Elixir supplies us with the `quote/2` function.
 - Using `quote/2` we can convert Elixir code into its underlying representation:
 
 ```elixir
@@ -15,15 +16,15 @@ quote do: 1 + 2
 
 quote do: 1+2+3
 # {
-#    :+, 
+#    :+,
 #    [context: Elixir, import: Kernel],
 #    [
 #        # First param
 #        {
-#            :+, 
-#            [context: Elixir, import: Kernel], 
+#            :+,
+#            [context: Elixir, import: Kernel],
 #            [1, 2]
-#        }, 
+#        },
 #        # Second param
 #        3
 #    ]
@@ -31,16 +32,17 @@ quote do: 1+2+3
 
 quote do: if value, do: "True", else: "False"
 # {
-#    :if, 
+#    :if,
 #    [context: Elixir, import: Kernel],
 #    [
-#        {:value, [], Elixir}, 
+#        {:value, [], Elixir},
 #        [do: "True", else: "False"]
 #    ]
 # }
 ```
 
 Notice the first three don’t return tuples? There are five literals that return themselves when quoted:
+
 - Atoms
 - strings
 - numbers
@@ -49,8 +51,8 @@ Notice the first three don’t return tuples? There are five literals that retur
 
 ## Unquote
 
-- Now that we can retrieve the internal structure of our code, how do we modify it? To inject new code or values we use `unquote/1`. 
-- When we unquote an expression it will be evaluated and injected into the AST. 
+- Now that we can retrieve the internal structure of our code, how do we modify it? To inject new code or values we use `unquote/1`.
+- When we unquote an expression it will be evaluated and injected into the AST.
 - To demonstrate unquote/1 let’s look at some examples:
 
 ```elixir
@@ -75,17 +77,19 @@ Macro.to_string(quote do: [1, 2, unquote(inner), 6])
 Macro.to_string(quote do: [1, 2, unquote_splicing(inner), 6])
 "[1, 2, 3, 4, 5, 6]"
 ```
+
 ### Usage
+
 The main usage is to inject code inside code.
 Unquoting is very useful when working with macros. When writing macros, developers are able to receive code chunks and inject them inside other code chunks, which can be used to transform code or write code that generates code during compilation.
 
 # Macros
 
 - At their core macros are special-case functions designed to `return a quoted expression` that will be inserted into our application code.
-- Imagine the macro being replaced with the quoted expression rather than called like a function. 
+- Imagine the macro being replaced with the quoted expression rather than called like a function.
 - With macros we have everything necessary to extend Elixir and dynamically add code to our applications.
 
-## Implement `unless` as a macro 
+## Implement `unless` as a macro
 
 ```elixir
 defmodule Unless do
@@ -109,12 +113,15 @@ Unless.macro_unless false, do: "Hi"
 ```
 
 ## debug a macro
+
 let's assume we call a macro inside a module Unless
+
 ```elixir
 Unless.macro_unless(true, do: IO.puts("this should never be printed"))
 ```
 
 if we wanna see the final result after injecting code we can use:
+
 ```elixir
 require Unless
 
@@ -198,10 +205,5 @@ end
 ```
 
 ## Tips
+
 - We use unquote if we wanna evaluate the value of a variable defined outside of the quote blocks
-
-
-
-
-
-

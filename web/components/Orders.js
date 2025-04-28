@@ -1,7 +1,6 @@
-import { HTTP } from "../http/http";
-
 const createReactClass = require("create-react-class");
 const React = require("react");
+const { HTTP } = require("../http/http");
 const { remoteProps } = require("../http/remoteProps");
 
 export const Orders = createReactClass({
@@ -10,7 +9,7 @@ export const Orders = createReactClass({
   },
   refrechData() {
     delete this.props.orders.url;
-    dispatchEvent(new PopStateEvent("popstate"));
+    this.props.GoTo("orders");
   },
   async onDeleteOrder(orderId) {
     const responseCode = await this.props.loader(async () =>

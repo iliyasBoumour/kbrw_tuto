@@ -5,14 +5,14 @@
 To create a process we can use `spawn`function
 
 - It takes in argument a function and execute it in another process
-- It returns the id of the process in which it got executed 
+- It returns the id of the process in which it got executed
 - It ends the process just after finishing executing the function
 
 ## check process status
 
 To check if a process is alive we can use the function
 
-``` elixir
+```elixir
 Process.alive?(PID)
 ```
 
@@ -24,23 +24,23 @@ Process.exit(pid, msg)
 
 ## see all running processes
 
-``` elixir
+```elixir
 :erlang.processes()
 ```
 
 ## Processes communication
 
-A process communicate with another process using two utilities 
+A process communicate with another process using two utilities
 
 - `send` allows us to send a message to a process by using its `pid`
-    - `send(pid, msg)`
+  - `send(pid, msg)`
 - `receive` make the process listenning for any message
-    - It stop listening once a message is processed (quid: you may wanna listen again at the end of each message processing) 
+  - It stop listening once a message is processed (quid: you may wanna listen again at the end of each message processing)
 
 ### How it works?
 
 - Each process has its own mailbox and if the process is not setup to receive them they will stay there
-- To check the process mailbox we can use `Process.info(pid, :messages)`n 
+- To check the process mailbox we can use `Process.info(pid, :messages)`n
 
 ### Example
 
@@ -60,28 +60,32 @@ end
 ## Linking prcesses
 
 ### Problem
+
 Imagine that we created a process `p2`from a `p1` and we stored its id in a variable, with this we can manage the process
 
 But if, for example `p1` crashed, we will lose the variable containing the `p2` id, so we will lose access to it and there is no way to stop it, so it will stay floated
 
 ### Solution?
+
 The solution is creating a `linked processes` instead of simple processes, so:
+
 - if any process crashes and restart, all the process that are linked will exit
 
 ## Monitoring processes
+
 What if we wanna just monito a process and know for example if it's down without being linked to a process?
 
-At that occasion we wanna create a process using `spawn_monitor` 
+At that occasion we wanna create a process using `spawn_monitor`
 
 In case that process crashes, the parent process will receive a message in its mailbox:
 
-``` elixir
+```elixir
 {pid, _} = spawn_monitor(fn -> receive do msg -> msg end end)
 
-Process.exit(pid, :exit)                                     
+Process.exit(pid, :exit)
 
-Process.info(self, :messages)                                
-#Output: 
+Process.info(self, :messages)
+#Output:
 #{:messages,
 # [
 #   {:DOWN, Reference<0.4150647085.3596091393.200530>, :process, PID<0.200.0>, :exit}
@@ -89,6 +93,7 @@ Process.info(self, :messages)
 ```
 
 # GenServer
+
 it is used to write stateful server processes, and it defines a set of functions that must be implemented, the most common are `init` `handle_call` `handle_cast` `handle_info`
 
 it allows to execute instructions in a transaction
@@ -106,7 +111,6 @@ GenServer.start_link(ModuleToStart, initialState, name: :nameOfGenServerProcess)
 - The name is used to get the pid of the process where it's running `GenServer.whereis(:nameOfGenServerProcess)`
 - If the name is `__MODULE__`, then we can call ou GenServer by the moduleName like: `GenServer.call(Counter, :get)`
 - The initial_state is get passed to `init` function that returns server state
-
 
 ## init function
 
@@ -139,17 +143,18 @@ For this we have two functions:
 
 ### handle_call
 
-#### About 
-- is synchronous 
+#### About
+
+- is synchronous
 - will respond with a `:reply`
 - get triggered with `GenServer.call(Module, message)`
 
-
 #### Signature
-It takes 3 arguments: 
+
+It takes 3 arguments:
 
 - The first one is the `message` being called
-- The second is about the `sender`, it's a tuple containing its `pid`, `reference` 
+- The second is about the `sender`, it's a tuple containing its `pid`, `reference`
 - The third one is the genServer `current state`
 
 It returns a tuple with:
@@ -161,13 +166,14 @@ It returns a tuple with:
 ### handle_cast
 
 #### About
-- asynchronous 
+
+- asynchronous
 - just process the message we send and assume it was received
 - get triggered with `GenServer.call(Module, {message_type, payload})`
 
-
 #### Signature
-It takes 2 arguments: 
+
+It takes 2 arguments:
 
 - The first one is a tuple with `message type` and a `payload`
 - The second one is the genServer `current state`
@@ -182,6 +188,7 @@ It returns a tuple with:
 if we send a message using `send` the function `handle_info` gets triggered
 
 ## Quick Start
+
 ```elixir
 defmodule Database do
   use GenServer
@@ -220,6 +227,7 @@ end
 ```
 
 #### Signature
+
 it takes 2 arguments
 
 - The message
@@ -230,10 +238,10 @@ It returns a tuple with:
 - `:noreply` atom
 - The new state
 
-
 # ETS table
 
 ## About
+
 ETS is a special table to save and read data, super fast. It's used for caching, like keeping stuff ready to grab quickly.
 
 Normally, if your GenServer wants to remember something, it keeps it in its own memory. But if lots of processes want to read that memory at the same time, the GenServer gets tired
@@ -246,6 +254,7 @@ So instead, we use ETS:
 - Let other process of your program read from it directly, without waiting
 
 ## Create ETS table
+
 We can create an ETS table using:
 
 ```elixir
@@ -253,21 +262,22 @@ table = :ets.new(:table_name, [:set, :protected, :named_table])
 ```
 
 ### Arguments
+
 Default option values are `[:set, :protected]`
 
-Some options: 
+Some options:
+
 - table name: allow us to access the table (by adding `:named_table` option)
 - options like:
-    - `:named_table`: allows us to
-    - `:set`: means each key is unique (no duplicates)
-    - `:protected`: only owner process can write, all processes can read
-    - `:public`: all processes can read and write
-    - `:private` only owner process can read and write
+  - `:named_table`: allows us to
+  - `:set`: means each key is unique (no duplicates)
+  - `:protected`: only owner process can write, all processes can read
+  - `:public`: all processes can read and write
+  - `:private` only owner process can read and write
 
 ## Access to ETS table
 
-⚠️ If you try to read or write and you're not allowed, you'll get an `ArgumentError` 
-
+⚠️ If you try to read or write and you're not allowed, you'll get an `ArgumentError`
 
 ### Insert / update
 
@@ -282,16 +292,16 @@ Some options:
 ```
 
 ### Read all
+
 ```elixir
 :ets.tab2list(:table_name)
 ```
 
 ### Delete
+
 ```elixir
 :ets.delete(:table_name, key)
 ```
-
-
 
 # ETS and GenServer
 
@@ -337,6 +347,7 @@ children = [
 There is 2 ways to start a supervisor either directly with a list of child specifications via `start_link/2` or by defining a module-based supervisor that implements the required callbacks
 
 ### Direct start
+
 ```elixir
 children = [
   # The Counter is a child started via Counter.start_link(0)
@@ -355,10 +366,11 @@ Supervisor.count_children(pid)
 ```
 
 ### Module based supervisor
+
 Just like GenServer, the module should `use Supervisor`, and then we should implement its functions (`init`, `start_link`)
 
-
 #### start_link function
+
 The function start_link/0 allows you to launch your Supervisor
 
 ```elixir
@@ -368,7 +380,8 @@ end
 ```
 
 #### init function
-- This funtion called by the function Supervisor.start_link called previously. 
+
+- This funtion called by the function Supervisor.start_link called previously.
 - Inside this function we can add all our child processes that we want to start
 - It should call the Supervisor's init/2 function as follows:
 
@@ -396,6 +409,7 @@ An Elixir application is a little program we can start, stop, and manage as a un
 It define what modules to start and how they connect (via a supervision tree).
 
 ## Create an Application
+
 ```elixir
 defmodule MyApp do
   use Application

@@ -15,7 +15,7 @@ defmodule Formation.MixProject do
   def application do
     [
       mod: {Formation.TutoKbrwStack, []},
-      extra_applications: [:logger],
+      extra_applications: [:logger, :inets, :ssl],
     ]
   end
 

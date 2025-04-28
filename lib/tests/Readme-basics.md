@@ -3,6 +3,7 @@
 All of those are `lexically scoped`, which means if they are defined in a module they would be available for all the module, and if they are defined in a function they would be available only inside it.
 
 ## alias
+
 Allows you to set up aliases for any given module name.
 
 ```elixir
@@ -22,6 +23,7 @@ alias Math.List
 ```
 
 ## require
+
 - Used to access only macros
 - Public functions in modules are globally available, but in order to use macros, you need to require the module they are defined in.
 
@@ -37,6 +39,7 @@ true
 ```
 
 ## import
+
 - used to access macros and functions without using MaduleName.
 
 ```elixir
@@ -46,7 +49,8 @@ duplicate(:ok, 3)
 #[:ok, :ok, :ok]
 ```
 
-## use 
+## use
+
 Behind the scenes, use requires the given module and then calls the `__using__/1` callback on it allowing the module to inject some code into the current context.
 
 ```elixir
@@ -54,6 +58,7 @@ defmodule Example do
   use Feature, option: :value
 end
 ```
+
 Is equivalent to this
 
 ```elixir
@@ -64,19 +69,24 @@ end
 ```
 
 # Module attributes
+
 Module attributes in Elixir serve three purposes:
+
 - as module and function annotations
 - as temporary module storage to be used during compilation
 - as compile-time constants
 
 ## As annotations
+
 Elixir has a handful of reserved attributes. Here are a few of them, the most commonly used ones:
+
 - `@moduledoc`: provides documentation for the current module.
 - `@doc`: provides documentation for the function or macro that follows the attribute.
 - `@spec`: provides a typespec for the function that follows the attribute.
 - `@behaviour`: used for specifying an OTP or user-defined behaviour.
 
 ### For documentation
+
 ```elixir
 defmodule Math do
   @moduledoc """
@@ -91,7 +101,8 @@ defmodule Math do
 end
 ```
 
-## An temporary storage
+## As temporary storage
+
 we can achieve this by using `@some_name`
 
 ```elixir
@@ -102,8 +113,8 @@ defmodule MyServer do
 end
 ```
 
-
 # Bahaviour
+
 - Is an interface
 - A behaviour module defines a set of functions and macros (referred to as callbacks) that callback modules implementing that behaviour must export. This `interface` identifies the specific part of the component.
 - If we use a behaviour but don't to implement all of the required functions, a compile time warning will be raised.
@@ -144,8 +155,9 @@ end
 ```
 
 # Protocols
+
 - Protocols are a means of achieving polymorphism in Elixir.
-- Allows us to execute a function dynamically based on the value’s type. 
+- Allows us to execute a function dynamically based on the value’s type.
 
 ## Implementing a Protocol
 
@@ -160,7 +172,7 @@ to_string("foo")
 # "foo"
 ```
 
-But 
+But
 
 `to_string({:foo})` give us a protocol error:
 `(Protocol.UndefinedError) protocol String.Chars not implemented for {:foo}`
@@ -199,6 +211,7 @@ end
 ```
 
 ## use it
+
 ```
 import AsAtom
 ```
