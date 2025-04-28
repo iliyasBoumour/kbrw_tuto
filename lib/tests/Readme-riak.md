@@ -16,6 +16,31 @@
 
 In one sentence: `Riak` stores your data, uses `Solr` to organize it, and uses `Lucene`'s language to search it.
 
+## Concept
+
+In Riak, when you want to search through your stored documents (like blog posts, products, customers, etc.), you need two things:
+
+- `Schema`: Describes the structure of your searchable data — what fields exist, their types, how to index them.
+- `Index`: A collection of documents that uses a specific schema. It's where your searchable data is stored.
+
+## How it works
+
+1. You save your data into Riak,
+
+   - If you want to search later (by title, author, date...), you have to tell Riak Search how to index it.
+
+2. Define a Schema to tell `Solr` what fields to expect and what/how to index them.
+
+3. Create an Index that is linked to a schema,
+
+   - The index uses the schema to know how to index the data you insert into Riak.
+
+4. Link Buckets to Indexes
+   - In Riak, each bucket (where you store objects) can be associated with an index.
+   - You tell Riak: "Anything stored in this bucket should be indexed using this index."
+
+✅ Now when you store data, Riak will automatically parse your objects according to the schema, and index them inside the correct index for searching later!
+
 ## indexing data
 
 We create indexes by providing a schema: the name and types of the fields to be indexed.
