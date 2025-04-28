@@ -122,14 +122,16 @@ defmodule Riak do
   end
 
   def delete_bucket(%{bucket_name: bucket} \\ Riak.bucket_info()) do
-    # {200, %{"props" => props}} =
-    #   request_cluster(:get, "/types/default/buckets/#{bucket}/props", nil)
+    {200, %{"props" => props}} =
+      request_cluster(:get, "/types/default/buckets/#{bucket}/props", nil)
 
     Riak.empty_bucket(bucket)
-    request_cluster(:delete, "/types/default/buckets/#{bucket}/props", nil)
+    {204, _} = request_cluster(:delete, "/types/default/buckets/#{bucket}/props", nil)
 
-    # index = props["search_index"]
-    # request_cluster(:delete, "/search/index/#{index}", nil)
+    :timer.sleep(2000)
+
+    index = props["search_index"]
+    request_cluster(:delete, "/search/index/#{index}", nil)
 
     :ok
   end
