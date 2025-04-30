@@ -1,5 +1,3 @@
-import { onPathChange } from "../app";
-
 const createReactClass = require("create-react-class");
 const React = require("react");
 const { HTTP } = require("../http/http");
