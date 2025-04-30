@@ -22,9 +22,14 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 formation-*.tar
 
+# React to ignore
 /web/node_modules
 /web/dist
 /priv
+
+# Other elixir app ignore
+/hello-port/web/node_modules
+/hello-port/_build
 
 # Temporary files for e.g. tests
 .vscode
