@@ -25,8 +25,45 @@ defmodule Riak do
     {code, decoded_body}
   end
 
+  def escape(path) do
+    forbidden_chars = [
+      "+",
+      "-",
+      "&&",
+      "||",
+      "!",
+      "(",
+      ")",
+      "{",
+      "}",
+      "[",
+      "]",
+      "^",
+      "\"",
+      "~",
+      "*",
+      "?",
+      ":",
+      "/"
+    ]
+
+    path
+    |> String.graphemes()
+    |> Enum.map(fn char ->
+      case Enum.member?(forbidden_chars, char) do
+        true ->
+          "\\#{char}"
+
+        _ ->
+          char
+      end
+    end)
+    |> Enum.join()
+  end
+
   defp request_cluster(method, path, body, content_type \\ 'application/json') do
-    url = '#{Riak.url()}#{path}'
+    encoded_path = URI.encode(path)
+    url = '#{Riak.url()}#{encoded_path}'
     headers = auth_header()
 
     encoded_body =
@@ -61,7 +98,7 @@ defmodule Riak do
     {code, response} = request_cluster(:get, "/buckets/#{bucket}/keys/#{key}", nil)
 
     case code do
-      200 -> response |> Map.fetch!(key)
+      200 -> response
       _ -> nil
     end
   end
@@ -70,6 +107,43 @@ defmodule Riak do
     {204, _} = request_cluster(:delete, "/buckets/#{bucket}/keys/#{key}", nil)
 
     :ok
+  end
+
+  def search(index, query, page \\ 0, rows \\ 30, sort \\ "creation_date_index") do
+    query_param =
+      case query do
+        "" -> "*:*"
+        _ -> query
+      end
+
+    {_code, response} =
+      request_cluster(
+        :get,
+        "/search/query/#{index}/?wt=json&q=#{query_param}&start=#{page * rows}&rows=#{rows}&sort=#{
+          sort
+        } desc",
+        nil
+      )
+
+    case response do
+      %{"error" => %{"msg" => msg}} ->
+        msg
+
+      %{"response" => %{"docs" => docs, "numFound" => numFound}} ->
+        %{total_count: numFound, page: page, rows: rows, orders: entries_from_indexes(docs)}
+    end
+  end
+
+  defp entries_from_indexes(indexed_docs) do
+    indexed_docs
+    |> Task.async_stream(
+      fn doc ->
+        doc_id = doc["id"] |> hd
+        Riak.get_entry(doc_id)
+      end,
+      [{:max_concurrency, 10}]
+    )
+    |> Enum.map(fn {:ok, order} -> order end)
   end
 
   ## schema & index

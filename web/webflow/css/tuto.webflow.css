@@ -2609,6 +2609,66 @@ textarea.w-select {
   align-items: center;
 }
 
+.search-container {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+  align-items: center;
+  display: flex;
+}
+
+.paragraph-6 {
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.form-2 {
+  align-items: center;
+  display: flex;
+}
+
+.form-block-2 {
+  grid-column-gap: 14px;
+  grid-row-gap: 14px;
+  margin-bottom: 0;
+  display: block;
+}
+
+.search-order-btn {
+  margin-top: 0;
+}
+
+.text-field-2,
+.input,
+.input.form-input {
+  margin-bottom: 0;
+}
+
+.search-form-block {
+  align-items: center;
+  display: flex;
+}
+
+.form-container.form-block {
+  margin-bottom: 0;
+}
+
+.btn {
+  color: #000;
+  background-color: #0000;
+  padding: 4px 8px;
+}
+
+.btn.pagination-btn {
+  color: #000;
+  background-color: #0000;
+}
+
+.btn.pagination-btn.pagination-btn-selected {
+  color: #fff;
+  background-color: #3898ec;
+  border-radius: 100%;
+}
+
 @media screen and (max-width: 991px) {
   .p {
     white-space: pre-wrap;
