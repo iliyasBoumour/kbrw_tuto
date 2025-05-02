@@ -1,3 +1,4 @@
+var localhost = require("reaxt/config").localhost;
 const XMLHttpRequest = require("xhr2");
 
 export const HTTP = new (function () {
@@ -9,6 +10,7 @@ export const HTTP = new (function () {
   this.req = (method, url, data) =>
     new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
+      url = typeof window !== "undefined" ? url : localhost + url;
       req.open(method, url);
       req.responseType = "text";
       req.setRequestHeader("accept", "application/json,*/*;0.8");

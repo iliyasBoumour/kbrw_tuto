@@ -99,3 +99,9 @@ Riak uses these internally for search and consistency.
 - `_yz_rt`: Bucket type the object belongs to.
 - `_yz_rb`: Bucket name the object belongs to.
 - `_yz_err`: Error flag — set if there was a failure in processing the object.
+
+# To see
+
+Masterless
+the ring
+how it index
