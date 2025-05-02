@@ -7,7 +7,8 @@ defmodule Formation.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      compilers: [:reaxt_webpack] ++ Mix.compilers()
     ]
   end
 
@@ -15,14 +16,15 @@ defmodule Formation.MixProject do
   def application do
     [
       mod: {Formation.TutoKbrwStack, []},
-      extra_applications: [:logger, :inets, :ssl],
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:poison, "~> 6.0"},
+      {:reaxt, tag: "v4.0.2", github: "kbrw/reaxt"},
+      {:poison, "~> 4.0"},
       {:plug_cowboy, "~> 2.4"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}

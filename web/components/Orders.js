@@ -76,29 +76,34 @@ export const Orders = createReactClass({
           </JSXZ>
         </Z>
         <Z sel=".tab-body">
-          {orders?.map((order, index) => (
-            <JSXZ
-              data-index={index}
-              key={order.remoteid}
-              in="orders"
-              sel=".tab-line"
-            >
-              <Z sel=".col-1 .p">{order.remoteid}</Z>
-              <Z sel=".col-2 .p">{order.custom.customer.full_name}</Z>
-              <Z sel=".col-3 .p">{order.custom.billing_address.street[0]}</Z>
-              <Z sel=".col-4 .p">{order.custom.items.length}</Z>
-              <Z sel=".col-5 .icon" onClick={this.onShowOrderDetails(order.id)}>
-                <ChildrenZ />
-              </Z>
-              <Z sel=".col-6 .order-status">{order.status.state}</Z>
-              <Z sel=".col-6 .payment-method">
-                {order.custom.magento.payment.method}
-              </Z>
-              <Z sel=".col-7 .icon" onClick={this.showDeleteModal(order.id)}>
-                <ChildrenZ />
-              </Z>
-            </JSXZ>
-          ))}
+          {orders?.map((order, index) =>
+            order ? (
+              <JSXZ
+                data-index={index}
+                key={order.remoteid}
+                in="orders"
+                sel=".tab-line"
+              >
+                <Z sel=".col-1 .p">{order.remoteid}</Z>
+                <Z sel=".col-2 .p">{order.custom.customer.full_name}</Z>
+                <Z sel=".col-3 .p">{order.custom.billing_address.street[0]}</Z>
+                <Z sel=".col-4 .p">{order.custom.items.length}</Z>
+                <Z
+                  sel=".col-5 .icon"
+                  onClick={this.onShowOrderDetails(order.id)}
+                >
+                  <ChildrenZ />
+                </Z>
+                <Z sel=".col-6 .order-status">{order.status.state}</Z>
+                <Z sel=".col-6 .payment-method">
+                  {order.custom.magento.payment.method}
+                </Z>
+                <Z sel=".col-7 .icon" onClick={this.showDeleteModal(order.id)}>
+                  <ChildrenZ />
+                </Z>
+              </JSXZ>
+            ) : null
+          )}
         </Z>
         <Z sel=".pagination">
           {new Array(pagesCount).fill(null).map((_, index) => (

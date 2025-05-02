@@ -79,7 +79,7 @@ defmodule Plugs.Router do
   end
 
   defp delete_order(conn, order_id) do
-    order = Database.read(order_id)
+    order = Riak.get_entry(order_id)
 
     :timer.sleep(2000)
 
@@ -88,7 +88,7 @@ defmodule Plugs.Router do
         send_resp(conn, 404, "Order not found")
 
       _ ->
-        Database.delete(order_id)
+        Riak.delete_entry(order_id)
         send_resp(conn, 204, "")
     end
   end
