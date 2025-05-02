@@ -381,7 +381,7 @@ end
 
 #### init function
 
-- This funtion called by the function Supervisor.start_link called previously.
+- This function is called by the function Supervisor.start_link called previously.
 - Inside this function we can add all our child processes that we want to start
 - It should call the Supervisor's init/2 function as follows:
 
