@@ -10,12 +10,12 @@ export const Order = createReactClass({
   render() {
     const {
       order: { value: order },
-      GoTo,
+      Link,
     } = this.props;
 
     const goBack = () => (e) => {
       e.preventDefault();
-      GoTo("orders");
+      Link.GoTo("orders");
     };
 
     return (

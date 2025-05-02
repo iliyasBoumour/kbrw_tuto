@@ -18,7 +18,7 @@ var client_config = {
           name: "styles",
           test: /\.css$/,
           chunks: "all",
-          // enforce: true,
+          enforce: true,
         },
       },
     },

@@ -1,8 +1,9 @@
 defmodule Plugs.Router do
   use Plug.Router
+  require EEx
 
   plug(:match)
-  plug(Plug.Static, from: "priv/static", at: "/static")
+  plug(Plug.Static, at: "/public", from: :formation)
 
   plug(Plug.Parsers,
     parsers: [:json],
@@ -11,6 +12,8 @@ defmodule Plugs.Router do
   )
 
   plug(:dispatch)
+
+  EEx.function_from_file(:defp, :layout, "web/layout.html.eex", [:render])
 
   # Crud routes
   post("/api/orders", do: create_order(conn))
@@ -23,7 +26,22 @@ defmodule Plugs.Router do
 
   delete("/api/orders/:id", do: delete_order(conn, id))
 
-  get(_, do: send_file(conn, 200, "priv/static/index.html"))
+  get _ do
+    conn = fetch_query_params(conn)
+
+    render =
+      Reaxt.render!(
+        :app,
+        %{path: conn.request_path, cookies: conn.cookies, query: conn.params},
+        30_000
+      )
+
+    send_resp(
+      put_resp_header(conn, "content-type", "text/html;charset=utf-8"),
+      render.param || 200,
+      layout(render)
+    )
+  end
 
   match(_, do: send_resp(conn, 404, "Page not found"))
 

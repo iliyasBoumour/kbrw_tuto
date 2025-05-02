@@ -13,7 +13,7 @@ export const Orders = createReactClass({
   },
   refreshData(query) {
     delete this.props.orders.url;
-    this.props.GoTo("orders", null, query);
+    this.props.Link.GoTo("orders", null, query);
     window.scrollTo(0, 0);
   },
   async onDeleteOrder(orderId) {
@@ -34,7 +34,7 @@ export const Orders = createReactClass({
     };
   },
   onShowOrderDetails(orderId) {
-    return () => this.props.GoTo("order", orderId);
+    return () => this.props.Link.GoTo("order", orderId);
   },
   parseSearchKeyword() {
     const [key, value] = this.state.searchKeyword.split(":");
