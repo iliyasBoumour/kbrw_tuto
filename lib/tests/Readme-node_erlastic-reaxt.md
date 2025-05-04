@@ -78,7 +78,7 @@ Imagine a busy restaurant:
 
 ### setup a pool
 
-`Pool.child_spec/3` is a that generates the config (child_spec) needed to start a pool of worker processes under a supervisor.
+`Pool.child_spec/3` is a function that generates the config (child_spec) needed to start a pool of worker processes under a supervisor.
 
 ```elixir
 children = :poolboy.child_spec(pool_name, [worker_module: module_name, size: pool_size, max_overflow: pool_overflow, name: {:local, pool}], arg_passed_to_worker)
@@ -258,3 +258,143 @@ Now with all our pools set up, we need to start reading the `js` files and then 
 - This launches a `Node.js` server process from Elixir using Exos.Proc.
 - Sends some initial config as JSON
 - The node server can now render React!
+
+## How it works
+
+1. Webpack compiles your React app
+
+- Reaxt assumes this app lives in web/ folder inside your project.
+- web/components/\*.js → React components
+- web/webpack.config.js → Webpack config for client-side
+
+Webpack builds both:
+
+- The server-side JS used to render React components in Node
+- The client-side JS served to the browser
+
+2. Request comes in
+
+When a user visits the app in the browser
+
+```elixir
+get _ do
+  conn = fetch_query_params(conn)
+
+  render =
+    Reaxt.render!(
+      # look for the module ./app in the web/components folder
+      :app,
+      %{path: conn.request_path, cookies: conn.cookies, query: conn.params},
+      30_000
+    )
+
+  send_resp(200,layout(render))
+end
+```
+
+This Calls Reaxt.render!(:app, %{...}) to get the server-rendered React HTML in the format:
+
+```elixir
+%{
+  html: "<body><p class=\"logged-in-user\">John Doe</p></body>",
+  js_render: "(window.reaxt_render.apply(window,...",
+  param: nil
+}
+```
+
+Wraps it in HTML layout and sends it back to the browser
+
+3. `Reaxt.render!(:app, %{...})`
+
+- This says “Please render the React component/module in web/components/app.js, passing these props.”
+- This calls `render_result(:server, :app, %{...}, timeout)`
+- This calls the pool:
+
+```elixir
+Pool.transaction(:"react_server_pool", fn worker ->
+  GenServer.call(worker, {:render, :app, nil, %{...}, timeout}, timeout + 100)
+end)
+```
+
+4. Inside the pool worker
+
+- Each worker is a port that communicates to a Node.js process that can render React components on the server
+- They listen for GenServer.call messages from Elixir like:
+
+```elixir
+{:render, :app, nil, %{...}, timeout}
+```
+
+- That message is forwarded into Node.js (react_servers/server.js) that calls the function:
+
+```javascript
+reaxt_server_render(props, renderCallback);
+```
+
+This comes from the JS code we defined in our app.js file:
+
+```javascript
+export default {
+  ...
+  reaxt_server_render(params, render) {
+    ...
+    render(<Child {...browserState} />);
+  },
+  ...
+}
+```
+
+- So our Nodejs server calls reaxt_server_render function:
+  - params is the map passed from Elixir: %{path, query, cookies}
+  - render(component, status?) is a function that takes a React element and sends back:
+    - the rendered HTML and props getting passed to that component
+    - the status code (optional)
+
+This is what performs server-side rendering (SSR).
+
+5. Back to Elixir
+
+The Node.js worker replies with:
+
+```elixir
+{:ok, %{
+  html: "<div>Rendered HTML</div>",
+  js_render: "function that rehydrates the app on client",
+  param: status
+}}
+```
+
+Reaxt.render! unwraps the result embed it in the layout.html.eex
+
+```html
+<div id="content"><%= render.html %></div>
+
+<script id="client_script" src="/public/<%= WebPack.file_of(:main) %>"></script>
+
+<script>
+  <%= render.js_render %>.then(function(render) { return render("content") })
+</script>
+```
+
+6. The client takes over
+
+After the HTML is rendered:
+
+- The browser loads the <script> from /public/...js
+- The `render.js_render` function (injected by Reaxt) rehydrates the React app on the client side by calling `window.reaxt_render` that calls `reaxt_client_render` defined in our `app.js` file and pass to it the props (browserProps) in line 147 and a render function from `ReactDom`
+
+Now your app is live, interactive, and uses the same props as the server.
+
+## Questions
+
+✅ What is Reaxt?
+Reaxt is an Elixir library that integrates React with Elixir/Phoenix, enabling server-side rendering (SSR) of React components using a Node.js pool.
+
+✅ Why do we use server-side rendering (SSR)?
+
+- Faster first load (especially on slow connections)
+- Better SEO (HTML is sent, not just JS)
+- Improved accessibility and sharing (content is visible without JS)
+
+✅ What does EEx stand for, and what are its use cases?
+EEx = Embedded Elixir — it's Elixir’s templating engine that lets you embed Elixir code inside .html.eex files, mainly used to generate dynamic HTML views.

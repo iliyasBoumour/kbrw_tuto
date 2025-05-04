@@ -9,6 +9,7 @@ var client_config = {
     path: path.join(__dirname, "../priv/static"),
     filename: "[name].[fullhash].js",
     chunkFilename: "chunk/client.[chunkhash].js",
+    clean: true,
     publicPath: "/public/",
   },
   optimization: {

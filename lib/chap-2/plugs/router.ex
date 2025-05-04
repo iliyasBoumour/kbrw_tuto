@@ -2,8 +2,17 @@ defmodule Plugs.Router do
   use Plug.Router
   require EEx
 
+  if Mix.env() == :dev && Application.get_env(:reaxt, :hot) == true do
+    use Plug.Debugger
+    IO.puts("Hot reload enabled")
+    # from: :formation <=> :code.priv_dir(:formation)
+    plug(WebPack.Plug.Static, at: "/public", from: :formation)
+  else
+    IO.puts("No hot reload")
+    plug(Plug.Static, at: "/public", from: :formation)
+  end
+
   plug(:match)
-  plug(Plug.Static, at: "/public", from: :formation)
 
   plug(Plug.Parsers,
     parsers: [:json],
@@ -27,6 +36,7 @@ defmodule Plugs.Router do
   delete("/api/orders/:id", do: delete_order(conn, id))
 
   get _ do
+    IO.puts("Request received")
     conn = fetch_query_params(conn)
 
     render =
@@ -35,6 +45,8 @@ defmodule Plugs.Router do
         %{path: conn.request_path, cookies: conn.cookies, query: conn.params},
         30_000
       )
+
+    IO.puts("Nodejs server answered with: #{inspect(render)}")
 
     send_resp(
       put_resp_header(conn, "content-type", "text/html;charset=utf-8"),
