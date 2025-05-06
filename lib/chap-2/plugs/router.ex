@@ -31,6 +31,8 @@ defmodule Plugs.Router do
 
   get("/api/orders", do: get_orders(conn))
 
+  post("/api/orders/:id/pay", do: pay_order(conn, id))
+
   put("/api/orders/:id", do: update_order(conn, id))
 
   delete("/api/orders/:id", do: delete_order(conn, id))
@@ -46,7 +48,7 @@ defmodule Plugs.Router do
         30_000
       )
 
-    IO.puts("Nodejs server answered with: #{inspect(render)}")
+    # IO.puts("Nodejs server answered with: #{inspect(render)}")
 
     send_resp(
       put_resp_header(conn, "content-type", "text/html;charset=utf-8"),
@@ -91,6 +93,22 @@ defmodule Plugs.Router do
     send_resp(conn, 200, orders)
   end
 
+  def pay_order(conn, order_id) do
+    case Riak.get_entry(order_id) do
+      nil ->
+        send_resp(conn, 404, "Order not found")
+
+      order ->
+        case OrderPaymentManager.pay(order) do
+          :action_unavailable ->
+            send_resp(conn, 400, "Bad params")
+
+          updated_order ->
+            send_resp(conn, 200, to_json(updated_order))
+        end
+    end
+  end
+
   defp update_order(conn, order_id) do
     order = Riak.get_entry(order_id)
     new_order = conn.body_params
@@ -122,6 +140,8 @@ defmodule Plugs.Router do
         send_resp(conn, 204, "")
     end
   end
+
+  # Utils
 
   defp adapt_search_params(query_params) do
     default_params = [page: 0, rows: 30, q: ""]

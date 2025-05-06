@@ -23,6 +23,15 @@ export const Orders = createReactClass({
 
     if (responseCode === 204) this.refreshData();
   },
+  onPayOrder(orderId) {
+    return async () => {
+      await this.props.loader(async () =>
+        HTTP.post(`/api/orders/${orderId}/pay`)
+      );
+
+      this.refreshData();
+    };
+  },
   showDeleteModal(orderId) {
     return () => {
       this.props.modal({
@@ -90,6 +99,9 @@ export const Orders = createReactClass({
                   sel=".col-5 .icon"
                   onClick={this.onShowOrderDetails(order.id)}
                 >
+                  <ChildrenZ />
+                </Z>
+                <Z sel=".col-6 .icon" onClick={this.onPayOrder(order.id)}>
                   <ChildrenZ />
                 </Z>
                 <Z sel=".col-6 .order-status">{order.status.state}</Z>

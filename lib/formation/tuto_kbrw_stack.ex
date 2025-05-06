@@ -15,6 +15,8 @@ defmodule Formation.TutoKbrwStack do
     Reaxt.reload()
 
     children = [
+      OrderPaymentProcessesTable,
+      {DynamicSupervisor, name: Formation.DynamicSupervisor, strategy: :one_for_one},
       ServSupervisor,
       CowboySupervisor
     ]

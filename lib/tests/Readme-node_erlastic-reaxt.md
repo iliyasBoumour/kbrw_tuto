@@ -81,7 +81,12 @@ Imagine a busy restaurant:
 `Pool.child_spec/3` is a function that generates the config (child_spec) needed to start a pool of worker processes under a supervisor.
 
 ```elixir
-children = :poolboy.child_spec(pool_name, [worker_module: module_name, size: pool_size, max_overflow: pool_overflow, name: {:local, pool}], arg_passed_to_worker)
+
+children = :poolboy.child_spec(
+  pool_name,
+  [worker_module: module_name, size: pool_size, max_overflow: pool_overflow, name: {:local, pool}],
+  arg_passed_to worker.start_link     # start_link should return {:ok, worker_pid}
+)
 ```
 
 Then we need to start them using a supervisor

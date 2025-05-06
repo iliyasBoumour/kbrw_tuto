@@ -2,9 +2,28 @@
 
 - A distributed NoSQL key-value database
 - Objects are stored in `buckets` (they are just logical)
-- it is distributed across mutliple instances, as a cluster
+- it is distributed across multiple instances, as a cluster
   - handle a bigger volume of requests.
   - They all share the data and are synchronized automatically.
+
+# Advantages
+
+## Availability
+
+- The application can read and write data even when parts of the system fail
+- Riak replicates each piece of data to multiple nodes (usually 3).
+- If one node is down, the other replicas serve the data.
+
+## Scalability
+
+- You can add more servers to handle more traffic or store more data without downtime or major reconfiguration.
+- Riak Uses consistent hashing to spread data evenly across nodes.
+- Adding a new node redistributes part of the data automatically.
+
+## Masterless Architecture
+
+- There’s no single "boss" node in charge. Every node can handle reads and writes independently.
+- If a node dies, no "leader" is lost—others keep working.
 
 # schema and indexes
 
