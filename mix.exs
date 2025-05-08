@@ -25,6 +25,7 @@ defmodule Formation.MixProject do
     [
       {:reaxt, tag: "v4.0.2", github: "kbrw/reaxt"},
       {:exfsm, git: "https://github.com/kbrw/exfsm.git"},
+      {:ewebmachine, git: "https://github.com/kbrw/ewebmachine.git"},
       {:poison, "~> 4.0"},
       {:plug_cowboy, "~> 2.4"}
       # {:dep_from_hexpm, "~> 0.3.0"},

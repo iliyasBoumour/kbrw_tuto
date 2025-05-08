@@ -19,6 +19,7 @@ defmodule Formation.TutoKbrwStack do
       {DynamicSupervisor, name: Formation.DynamicSupervisor, strategy: :one_for_one},
       ServSupervisor,
       CowboySupervisor
+      # {Plug.Cowboy, scheme: :http, plug: Server.EwebRouter, options: [port: 4002]}
     ]
 
     opts = [strategy: :one_for_one, name: Formation.TutoKbrwStack.Supervisor]
