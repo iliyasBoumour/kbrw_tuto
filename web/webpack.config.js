@@ -50,6 +50,7 @@ var server_config = Object.assign(Object.assign({}, client_config), {
   target: "node",
   entry: "reaxt/react_server",
   output: {
+    clean: true,
     path: path.join(__dirname, "../priv/react_servers"), //typical output on the default directory served by Plug.Static
     filename: "server.js", //dynamic name for long term caching, or code splitting, use WebPack.file_of(:main) to get it
     chunkFilename: "chunk/server.[id].js",

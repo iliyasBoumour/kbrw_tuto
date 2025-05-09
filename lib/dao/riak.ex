@@ -2,85 +2,6 @@ defmodule Riak do
   ## Utility functions
   def url, do: "https://kbrw-sb-tutoex-riak-gateway.kbrw.fr"
 
-  def bucket_info,
-    do: %{
-      schema_name: "ILIYAS_orders_schema",
-      schema_path: "lib/chap-6/schema-riak.xml",
-      index_name: "ILIYAS_orders_index",
-      bucket_name: "ILIYAS_orders"
-    }
-
-  defp auth_header do
-    username = "sophomore"
-    password = "jlessthan3tutoex"
-    auth = :base64.encode_to_string("#{username}:#{password}")
-    [{'authorization', 'Basic #{auth}'}]
-  end
-
-  defp get_response_data(response) do
-    {:ok, {{_http_v, code, _http_message}, _headers, body}} = response
-
-    {_, decoded_body} = Poison.decode(body)
-
-    {code, decoded_body}
-  end
-
-  def escape(path) do
-    forbidden_chars = [
-      "+",
-      "-",
-      "&&",
-      "||",
-      "!",
-      "(",
-      ")",
-      "{",
-      "}",
-      "[",
-      "]",
-      "^",
-      "\"",
-      "~",
-      "*",
-      "?",
-      ":",
-      "/"
-    ]
-
-    path
-    |> String.graphemes()
-    |> Enum.map(fn char ->
-      case Enum.member?(forbidden_chars, char) do
-        true ->
-          "\\#{char}"
-
-        _ ->
-          char
-      end
-    end)
-    |> Enum.join()
-  end
-
-  defp request_cluster(method, path, body, content_type \\ 'application/json') do
-    encoded_path = URI.encode(path)
-    url = '#{Riak.url()}#{encoded_path}'
-    headers = auth_header()
-
-    encoded_body =
-      case content_type do
-        'application/json' -> Poison.encode!(body)
-        _ -> body
-      end
-
-    request =
-      case body do
-        nil -> {url, headers}
-        _ -> {url, headers, content_type, encoded_body}
-      end
-
-    :httpc.request(method, request, [], []) |> get_response_data()
-  end
-
   ## Crud operations
   def get_bucket_keys(%{bucket_name: bucket} \\ Riak.bucket_info()) do
     {200, response} = request_cluster(:get, "/buckets/#{bucket}/keys?keys=true", nil)
@@ -208,5 +129,86 @@ defmodule Riak do
     request_cluster(:delete, "/search/index/#{index}", nil)
 
     :ok
+  end
+
+  # Helpers
+
+  def bucket_info,
+    do: %{
+      schema_name: "ILIYAS_orders_schema",
+      schema_path: "lib/chap-6/schema-riak.xml",
+      index_name: "ILIYAS_orders_index",
+      bucket_name: "ILIYAS_orders"
+    }
+
+  defp auth_header do
+    username = "sophomore"
+    password = "jlessthan3tutoex"
+    auth = :base64.encode_to_string("#{username}:#{password}")
+    [{'authorization', 'Basic #{auth}'}]
+  end
+
+  defp get_response_data(response) do
+    {:ok, {{_http_v, code, _http_message}, _headers, body}} = response
+
+    {_, decoded_body} = Poison.decode(body)
+
+    {code, decoded_body}
+  end
+
+  def escape(path) do
+    forbidden_chars = [
+      "+",
+      "-",
+      "&&",
+      "||",
+      "!",
+      "(",
+      ")",
+      "{",
+      "}",
+      "[",
+      "]",
+      "^",
+      "\"",
+      "~",
+      "*",
+      "?",
+      ":",
+      "/"
+    ]
+
+    path
+    |> String.graphemes()
+    |> Enum.map(fn char ->
+      case Enum.member?(forbidden_chars, char) do
+        true ->
+          "\\#{char}"
+
+        _ ->
+          char
+      end
+    end)
+    |> Enum.join()
+  end
+
+  defp request_cluster(method, path, body, content_type \\ 'application/json') do
+    encoded_path = URI.encode(path)
+    url = '#{Riak.url()}#{encoded_path}'
+    headers = auth_header()
+
+    encoded_body =
+      case content_type do
+        'application/json' -> Poison.encode!(body)
+        _ -> body
+      end
+
+    request =
+      case body do
+        nil -> {url, headers}
+        _ -> {url, headers, content_type, encoded_body}
+      end
+
+    :httpc.request(method, request, [], []) |> get_response_data()
   end
 end
